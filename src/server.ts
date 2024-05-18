@@ -1,4 +1,7 @@
 import app from "./app";
+import 'dotenv/config'
+
+console.log(process.env.PORT);
 
 //START SERVER
 const port = 7000;
