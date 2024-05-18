@@ -17,7 +17,7 @@ This is a Node.js application that provides user tours appication api functional
 1. Clone the repository:
 
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/Arsjj/Tours-API.git
 
 ## Getting Started
 

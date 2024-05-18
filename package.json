@@ -1,0 +1,33 @@
+{
+  "name": "tours",
+  "version": "1.0.0",
+  "description": "App with node, express end mongo",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node ./dist/server.js",
+    "build": "tsc",
+    "dev": "nodemon **",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "js",
+    "node",
+    "express",
+    "mongo"
+  ],
+  "author": "Arsen Abrahamyan'",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.12.7",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  }
+}
