@@ -1,7 +1,12 @@
 import app from "./app";
-import 'dotenv/config'
+import mongoose from "mongoose";
+import "dotenv/config";
 
-console.log(process.env.PORT);
+const DB = process.env.DATABASE?.replace('<password>', process.env.DATABASE_PASSWORD as string)
+mongoose.connect(DB as string).then(() => {
+  console.log("Succesfull Connection");
+});
+
 
 //START SERVER
 const port = 7000;

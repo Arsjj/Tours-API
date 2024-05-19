@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import { createUser, deleteUser, getUser, getUsers, updateUser } from "../controllers/userController";
 
 const userRouter = express.Router();
