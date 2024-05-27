@@ -4,6 +4,7 @@ import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
 import AppError from "./utils/appError";
 import { globalErrorHandler } from "./controllers/errorController";
+import { protect } from "./controllers/authController";
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use((req: Request, res: Response, next: NextFunction): void => {
 
 
 //ROUTES
-app.use('/tours', tourRouter)
+app.use('/tours', protect, tourRouter)
 app.use('/users', userRouter)
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {

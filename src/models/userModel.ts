@@ -8,6 +8,14 @@ interface IUser extends mongoose.Document {
   photo?: string;
   password: string;
   passwordConfirm: string;
+  passwordChangedAt: Date,
+  passwordResetToken: string,
+  passwordResetExpires: Date,
+  active: {
+    type: boolean,
+    default: true,
+    select: false
+  }
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -45,18 +53,28 @@ const userSchema = new mongoose.Schema<IUser>({
       message: "Passwords are not the same!",
     },
   },
-  // passwordChangedAt: Date,
-  // passwordResetToken: String,
-  // passwordResetExpires: Date,
-  // active: {
-  //   type: Boolean,
-  //   default: true,
-  //   select: false
-  // }
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 });
 
 userSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string) {
     return await bcrypt.compare(candidatePassword, userPassword)
+}
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestapm: number) {
+  if(this.passwordChangedAt) {
+    const changedTimestamp = parseInt((this.passwordChangedAt.getTime() / 1000, 10).toString());
+    console.log(changedTimestamp, JWTTimestapm)
+    return JWTTimestapm < changedTimestamp 
+
+  }
+  return false
 }
 
 userSchema.pre("save", async function (next) {

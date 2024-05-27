@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import User from "../models/userModel";
-import jwt from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import AppError from "../utils/appError";
+import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 
 const signToken = (id: string) => {
@@ -39,10 +39,6 @@ const signIn = catchAsync(
     }
 
     const user = await User.findOne({ email }).select("+password");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // const correct = await user.correctPassword(password, user?.password);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (
       !user ||
       !(await (user as any).correctPassword(password, user?.password))
@@ -58,4 +54,54 @@ const signIn = catchAsync(
   }
 );
 
-export { signUp, signIn };
+const protect = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // 1) Getting token and check of it's there
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
+      return next(
+        new AppError("You are not logged in! Please log in get access", 401)
+      );
+    }
+
+    // 2) Verification token
+    const decoded: JwtPayload = jwt.verify(
+      token,
+      process.env.JWT_SECRET as jwt.Secret
+    ) as JwtPayload;
+
+    // 3) Check if user still exists
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser) {
+      return next(
+        new AppError(
+          "The user belonging to this token does no longer exist.",
+          401
+        )
+      );
+    }
+
+    // 4) Check if user changed password after the token was issued
+    if ((currentUser as any).changedPasswordAfter(decoded.iat)) {
+      return next(
+        new AppError(
+          "The user recently changed password! Please login again.",
+          401
+        )
+      );
+    }
+
+    // GRANT ACCESS TO PROTECTED ROUTE
+    (req as any).user = currentUser;
+    next();
+  }
+);
+
+export { signUp, signIn, protect };
