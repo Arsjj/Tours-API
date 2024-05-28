@@ -8,14 +8,19 @@ interface IUser extends mongoose.Document {
   photo?: string;
   password: string;
   passwordConfirm: string;
-  passwordChangedAt: Date,
-  passwordResetToken: string,
-  passwordResetExpires: Date,
+  passwordChangedAt: Date;
+  passwordResetToken: string;
+  passwordResetExpires: Date;
   active: {
-    type: boolean,
-    default: true,
-    select: false
-  }
+    type: boolean;
+    default: true;
+    select: false;
+  };
+  role: {
+    type: string;
+    enum: Array<string>;
+    default: string;
+  };
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -31,11 +36,11 @@ const userSchema = new mongoose.Schema<IUser>({
     validate: [validator.isEmail, "Please provide a valid email"],
   },
   photo: String,
-  // role: {
-  //   type: String,
-  //   enum: ['user', 'guide', 'lead-guide', 'admin'],
-  //   default: 'user'
-  // },
+  role: {
+    type: String,
+    enum: ["user", "guide", "lead-guide", "admin"],
+    default: "user",
+  },
   password: {
     type: String,
     required: [true, "Please provide a password"],
@@ -59,23 +64,27 @@ const userSchema = new mongoose.Schema<IUser>({
   active: {
     type: Boolean,
     default: true,
-    select: false
-  }
+    select: false,
+  },
 });
 
-userSchema.methods.correctPassword = async function (candidatePassword: string, userPassword: string) {
-    return await bcrypt.compare(candidatePassword, userPassword)
-}
+userSchema.methods.correctPassword = async function (
+  candidatePassword: string,
+  userPassword: string
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 userSchema.methods.changedPasswordAfter = function (JWTTimestapm: number) {
-  if(this.passwordChangedAt) {
-    const changedTimestamp = parseInt((this.passwordChangedAt.getTime() / 1000, 10).toString());
-    console.log(changedTimestamp, JWTTimestapm)
-    return JWTTimestapm < changedTimestamp 
-
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      (this.passwordChangedAt.getTime() / 1000, 10).toString()
+    );
+    console.log(changedTimestamp, JWTTimestapm);
+    return JWTTimestapm < changedTimestamp;
   }
-  return false
-}
+  return false;
+};
 
 userSchema.pre("save", async function (next) {
   //only runs this function if password is actually modyfied

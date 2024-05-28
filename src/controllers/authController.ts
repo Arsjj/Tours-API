@@ -2,7 +2,7 @@
 import User from "../models/userModel";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import AppError from "../utils/appError";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 
 const signToken = (id: string) => {
@@ -17,6 +17,7 @@ const signUp = catchAsync(async (req: Request, res: Response) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    // role: req.body.role
   });
 
   const token = signToken(newUser._id as string);
@@ -104,4 +105,14 @@ const protect = catchAsync(
   }
 );
 
-export { signUp, signIn, protect };
+const restrictTo = (...roles: Array<string>): RequestHandler => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!roles.includes((req as any).user.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 403)
+      );
+    }
+    next();
+  };
+};
+export { signUp, signIn, protect, restrictTo };
