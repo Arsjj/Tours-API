@@ -1,16 +1,17 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
-interface IUser extends mongoose.Document {
+export interface IUser extends mongoose.Document {
   name: string;
   email: string;
   photo?: string;
   password: string;
-  passwordConfirm: string;
-  passwordChangedAt: Date;
-  passwordResetToken: string;
-  passwordResetExpires: Date;
+  passwordConfirm: string | undefined;
+  passwordChangedAt: Date | number;
+  passwordResetToken: string | undefined;
+  passwordResetExpires: Date | undefined;
   active: {
     type: boolean;
     default: true;
@@ -86,11 +87,33 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestapm: number) {
   return false;
 };
 
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  console.log({ a: resetToken, b: this.passwordResetToken });
+
+  return resetToken;
+};
+
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
 userSchema.pre("save", async function (next) {
   //only runs this function if password is actually modyfied
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfirm = "undefined";
+  this.passwordConfirm = undefined;
   next();
 });
 
