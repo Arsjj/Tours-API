@@ -5,7 +5,7 @@ import AppError from "../utils/appError";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { sendEmail } from "../utils/emial";
 import { catchAsync } from "../utils/catchAsync";
-import { NextFunction, Request, RequestHandler, Response } from "express";
+import { CookieOptions, NextFunction, Request, RequestHandler, Response } from "express";
 
 const signToken = (id: string) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET as string, {
@@ -23,9 +23,10 @@ const createSendToken = (user: any, statusCode: number, res: Response) => {
     httpOnly: true,
   };
   if (process.env.NODE_ENV === "production")
-    (cookieOptions as any).secure = true;
+    (cookieOptions as CookieOptions).secure = true;
 
   res.cookie("jwt", token, cookieOptions);
+  console.log(res.cookie)
 
   // Remove password from output
   user.password = undefined;
@@ -48,15 +49,7 @@ const signUp = catchAsync(async (req: Request, res: Response) => {
     // role: req.body.role
   });
 
-  const token = signToken(newUser._id as string);
-
-  res.status(201).json({
-    status: "success",
-    token: token,
-    data: {
-      user: newUser,
-    },
-  });
+  createSendToken(newUser, 201, res);
 });
 
 const signIn = catchAsync(
@@ -246,4 +239,12 @@ const updatePassword = catchAsync(
   }
 );
 
-export { signUp, signIn, protect, restrictTo, forgotPassword, resetPassword, updatePassword };
+export {
+  signUp,
+  signIn,
+  protect,
+  restrictTo,
+  forgotPassword,
+  resetPassword,
+  updatePassword,
+};

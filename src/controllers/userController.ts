@@ -4,7 +4,10 @@ import { catchAsync } from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import User from "../models/userModel";
 
-const filterObj = (obj: Record<string, any> , ...allowedFields: Array<string>) => {
+const filterObj = (
+  obj: Record<string, any>,
+  ...allowedFields: Array<string>
+) => {
   const newObj: any = {};
   Object.keys(obj).forEach((el) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
@@ -12,12 +15,18 @@ const filterObj = (obj: Record<string, any> , ...allowedFields: Array<string>) =
   return newObj;
 };
 
-const getUsers = (req: Request, res: Response) => {
-  res.status(500).json({
-    statuse: "error",
-    message: "This route isn't defined yet",
+const getUsers = catchAsync(async (req: Request, res: Response) => {
+  const users = await User.find();
+
+  // SEND RESPONSE
+  res.status(200).json({
+    status: "success",
+    results: users.length,
+    data: {
+      users,
+    },
   });
-};
+});
 
 const createUser = (req: Request, res: Response) => {
   res.status(500).json({
@@ -78,4 +87,23 @@ const updateMe = catchAsync(
   }
 );
 
-export { getUsers, getUser, createUser, updateUser, deleteUser, updateMe };
+const deleteMe = catchAsync(
+  async (req: Request, res: Response) => {
+    await User.findByIdAndUpdate(req.user?.id, { active: false });
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  }
+);
+
+export {
+  getUsers,
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser,
+  updateMe,
+  deleteMe,
+};
