@@ -9,6 +9,7 @@ import userRouter from "./routes/userRoutes";
 import ExpressMongoSanitize from "express-mongo-sanitize";
 import { protect } from "./controllers/authController";
 import { globalErrorHandler } from "./controllers/errorController";
+import reviewRouter from "./routes/reviewRoutes";
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use(
 
 //ROUTES
 app.use("/tours", protect, tourRouter);
+app.use("/reviews", reviewRouter);
 app.use("/users", userRouter);
 
 app.all("*", (req: Request, res: Response, next: NextFunction) => {

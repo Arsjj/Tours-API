@@ -1,4 +1,6 @@
-import mongoose from "mongoose";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose, { Query } from "mongoose";
+import { Document } from "mongoose";
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -15,14 +17,14 @@ const reviewSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    tours: [
+    tour: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "Tour",
         required: [true, "Review must belong to a tour"],
       },
     ],
-    users: [
+    user: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "User",
@@ -35,6 +37,25 @@ const reviewSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+reviewSchema.pre(/^find/, function (next) {
+  //   (this as Query<any, Document<any>>)
+  //     .populate({
+  //       path: "tour",
+  //       select: "name",
+  //     })
+  //     .populate({
+  //       path: "user",
+  //       select: "name photo",
+  //     });
+
+  (this as Query<any, Document<any>>).populate({
+    path: "user",
+    select: "name photo",
+  });
+
+  next();
+});
 
 const Review = mongoose.model("Review", reviewSchema);
 
