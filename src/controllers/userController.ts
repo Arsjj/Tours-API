@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import User from "../models/userModel";
-import { deleteOne } from "./handlerFactory";
+import { deleteOne, updateOne } from "./handlerFactory";
 
 const filterObj = (
   obj: Record<string, any>,
@@ -41,13 +41,8 @@ const getUser = (req: Request, res: Response) => {
     message: "This route isn't defined yet",
   });
 };
-const updateUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    statuse: "error",
-    message: "This route isn't defined yet",
-  });
-};
-const deleteUser = deleteOne(User)
+const updateUser = updateOne(User);
+const deleteUser = deleteOne(User);
 
 const updateMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -83,16 +78,14 @@ const updateMe = catchAsync(
   }
 );
 
-const deleteMe = catchAsync(
-  async (req: Request, res: Response) => {
-    await User.findByIdAndUpdate(req.user?.id, { active: false });
+const deleteMe = catchAsync(async (req: Request, res: Response) => {
+  await User.findByIdAndUpdate(req.user?.id, { active: false });
 
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  }
-);
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
 
 export {
   getUsers,

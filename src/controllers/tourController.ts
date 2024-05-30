@@ -1,7 +1,7 @@
 import Tour from "../models/tourModel";
 import { NextFunction, Request, Response } from "express";
 import APIFeatures from "../utils/apiFeatures";
-import { deleteOne } from "./handlerFactory";
+import { createOne, deleteOne, updateOne } from "./handlerFactory";
 
 const aliasTopTours = (req: Request, res: Response, next: NextFunction) => {
   req.query.limit = "5";
@@ -52,59 +52,9 @@ const getTour = async (req: Request, res: Response) => {
   }
 };
 
-const createTour = async (req: Request, res: Response) => {
-  try {
-    const newTour = await Tour.create(req.body);
-    res.status(201).json({
-      status: "success",
-      data: {
-        tour: newTour,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: "failed",
-      message: "Invalid data types",
-    });
-  }
-};
-
-// const deleteTour = async (req: Request, res: Response) => {
-//   try {
-//     await Tour.findByIdAndDelete(req.params.id);
-
-//     res.status(204).json({
-//       status: "success",
-//       data: null,
-//     });
-//   } catch (err) {
-//     res.status(404).json({
-//       status: "failed",
-//       message: err,
-//     });
-//   }
-// };
-
+const createTour = createOne(Tour);
 const deleteTour = deleteOne(Tour);
-
-const updateTour = async (req: Request, res: Response) => {
-  try {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    res.status(200).json({
-      status: "success",
-      data: tour,
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "failed",
-      message: err,
-    });
-  }
-};
+const updateTour = updateOne(Tour);
 
 const getToursstats = async (req: Request, res: Response) => {
   try {

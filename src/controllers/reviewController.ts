@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import { Review } from "../models/reviewModel";
-import { deleteOne } from "./handlerFactory";
+import { deleteOne, updateOne } from "./handlerFactory";
 
 const getReviews = catchAsync(async (req: Request, res: Response) => {
   let filter = {};
@@ -34,6 +34,7 @@ const createReview = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateReview = updateOne(Review);
 const deleteReview = deleteOne(Review);
 
-export { getReviews, createReview, deleteReview };
+export { getReviews, createReview, updateReview, deleteReview };
