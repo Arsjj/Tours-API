@@ -2,6 +2,7 @@ import express from "express";
 import {
   createReview,
   deleteReview,
+  getReview,
   getReviews,
   updateReview,
 } from "../controllers/reviewController";
@@ -16,6 +17,6 @@ reviewRouter
   .get(getReviews)
   .post(protect, restrictTo("user"), createReview);
 
-reviewRouter.route("/:id").patch(updateReview).delete(deleteReview);
+reviewRouter.route("/:id").get(getReview).patch(updateReview).delete(deleteReview);
 
 export default reviewRouter;

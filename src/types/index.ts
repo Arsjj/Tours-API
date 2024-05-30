@@ -1,3 +1,7 @@
+import { Review } from "../models/reviewModel";
+import Tour from "../models/tourModel";
+import User from "../models/userModel";
+
 export interface TourType {
   id: number;
   name: string;
@@ -13,3 +17,5 @@ export interface TourType {
   images?: string[];
   startDates?: string[];
 }
+
+export type ModelType = typeof Tour | typeof User | typeof Review;

@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import User from "../models/userModel";
-import { deleteOne, updateOne } from "./handlerFactory";
+import { deleteOne, getAll, getOne, updateOne } from "./handlerFactory";
 
 const filterObj = (
   obj: Record<string, any>,
@@ -16,33 +16,12 @@ const filterObj = (
   return newObj;
 };
 
-const getUsers = catchAsync(async (req: Request, res: Response) => {
-  const users = await User.find();
-
-  // SEND RESPONSE
-  res.status(200).json({
-    status: "success",
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
-
 const createUser = (req: Request, res: Response) => {
   res.status(500).json({
     statuse: "error",
     message: "This route isn't defined yet",
   });
 };
-const getUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    statuse: "error",
-    message: "This route isn't defined yet",
-  });
-};
-const updateUser = updateOne(User);
-const deleteUser = deleteOne(User);
 
 const updateMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -86,6 +65,11 @@ const deleteMe = catchAsync(async (req: Request, res: Response) => {
     data: null,
   });
 });
+
+const getUser = getOne(User);
+const getUsers = getAll(User);
+const updateUser = updateOne(User);
+const deleteUser = deleteOne(User);
 
 export {
   getUsers,

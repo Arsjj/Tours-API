@@ -1,7 +1,12 @@
 import Tour from "../models/tourModel";
 import { NextFunction, Request, Response } from "express";
-import APIFeatures from "../utils/apiFeatures";
-import { createOne, deleteOne, updateOne } from "./handlerFactory";
+import {
+  createOne,
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne,
+} from "./handlerFactory";
 
 const aliasTopTours = (req: Request, res: Response, next: NextFunction) => {
   req.query.limit = "5";
@@ -10,48 +15,8 @@ const aliasTopTours = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-const getTours = async (req: Request, res: Response) => {
-  try {
-    const features = new APIFeatures(Tour.find(), req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
-    const tours = await features.query;
-
-    res.status(200).json({
-      status: "success",
-      results: tours.length,
-      data: {
-        tours,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "failed",
-      message: err,
-    });
-  }
-};
-
-const getTour = async (req: Request, res: Response) => {
-  try {
-    const tour = await Tour.findById(req.params.id);
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        tour,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "failed",
-      message: err,
-    });
-  }
-};
-
+const getTours = getAll(Tour);
+const getTour = getOne(Tour);
 const createTour = createOne(Tour);
 const deleteTour = deleteOne(Tour);
 const updateTour = updateOne(Tour);
