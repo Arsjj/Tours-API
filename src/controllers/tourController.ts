@@ -7,6 +7,8 @@ import {
   getOne,
   updateOne,
 } from "./handlerFactory";
+import { catchAsync } from "../utils/catchAsync";
+import AppError from "../utils/appError";
 
 const aliasTopTours = (req: Request, res: Response, next: NextFunction) => {
   req.query.limit = "5";
@@ -109,6 +111,37 @@ const getMonthlyPlan = async (req: Request, res: Response) => {
   }
 };
 
+const getToursWithin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { distance, lat, lng, unit } = req.params;
+
+    const radius =
+      unit === "mi" ? Number(distance) / 3963.2 : Number(distance) / 6378.1;
+
+    if (!lat || !lng) {
+      next(
+        new AppError(
+          "Please provide latitutr and longitude in the format lat,lng.",
+          400
+        )
+      );
+    }
+
+    const tours = await Tour.find({
+      startLocation: {
+        $geoWithin: {
+          $centerSphere: [[lat, lng], radius],
+        },
+      },
+    });
+    res.status(200).json({
+      status: "success",
+      results: tours.length,
+      data: tours,
+    });
+  }
+);
+
 export {
   getTours,
   getTour,
@@ -118,4 +151,5 @@ export {
   aliasTopTours,
   getToursstats,
   getMonthlyPlan,
+  getToursWithin,
 };

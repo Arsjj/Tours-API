@@ -23,6 +23,11 @@ const createUser = (req: Request, res: Response) => {
   });
 };
 
+const getMe = (req: Request, res: Response, next: NextFunction) => {
+  req.params.id = req.user?.id;
+  next();
+};
+
 const updateMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     // 1) Create error if user POSTs password data
@@ -77,6 +82,7 @@ export {
   createUser,
   updateUser,
   deleteUser,
+  getMe,
   updateMe,
   deleteMe,
 };
