@@ -3,8 +3,8 @@
 ## Description
 
 This is a Node.js application that provides tours appication api functionality, including login and registration, implemented in TypeScript.
-The initial documentation link below
-[Link Text](https://documenter.getpostman.com/view/20882618/2sA3Qy69VP#06a7f752-ec03-468a-bdce-ff72a2e0fdfe)
+The initial documentation link 
+[here](https://documenter.getpostman.com/view/20882618/2sA3Qy69VP#06a7f752-ec03-468a-bdce-ff72a2e0fdfe)
 
 
 ## Technologies Used
@@ -19,7 +19,7 @@ The initial documentation link below
 Clone the repository:
 
 ```bash
-   git clone https://github.com/Arsjj/Tours-API.git
+git clone https://github.com/Arsjj/Tours-API.git
 ```
 
 Install dependencies:
