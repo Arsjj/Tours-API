@@ -2,9 +2,9 @@
 
 ## Description
 
-This is a Node.js application that provides tours appication api functionality, including login and registration, implemented in TypeScript.
+This is a Node.js application that provides tours appication api functionality, including login and registration, implemented in TypeScript. <br>
 The initial documentation link 
-[here](https://documenter.getpostman.com/view/20882618/2sA3Qy69VP#06a7f752-ec03-468a-bdce-ff72a2e0fdfe)
+[here](https://documenter.getpostman.com/view/20882618/2sA3Qy69VP)
 
 
 ## Technologies Used
