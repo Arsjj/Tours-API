@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Query } from "mongoose";
-import validator from "validator";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
@@ -35,7 +34,7 @@ const userSchema = new mongoose.Schema<IUser>({
     required: [true, "Please provide your email"],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, "Please provide a valid email"],
+    // validate: [validator.isEmail, "Please provide a valid email"],
   },
   photo: String,
   role: {
