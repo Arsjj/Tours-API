@@ -7,7 +7,6 @@ import rateLimit from "express-rate-limit";
 import tourRouter from "./routes/tourRoutes";
 import userRouter from "./routes/userRoutes";
 import ExpressMongoSanitize from "express-mongo-sanitize";
-import { protect } from "./controllers/authController";
 import { globalErrorHandler } from "./controllers/errorController";
 import reviewRouter from "./routes/reviewRoutes";
 
@@ -53,7 +52,7 @@ app.use(
 );
 
 //ROUTES
-app.use("/tours", protect, tourRouter);
+app.use("/tours", tourRouter);
 app.use("/reviews", reviewRouter);
 app.use("/users", userRouter);
 

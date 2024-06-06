@@ -49,7 +49,7 @@ const createOne = (Model: any) =>
       return next(new AppError("No document found with that id", 404));
     }
 
-    res.status(200).json({
+    res.status(201).json({
       status: "success",
       data: doc,
     });
@@ -66,7 +66,7 @@ const updateOne = (Model: any) =>
       return next(new AppError("No document found with that id", 404));
     }
 
-    res.status(204).json({
+    res.status(200).json({
       status: "success",
       data: doc,
     });

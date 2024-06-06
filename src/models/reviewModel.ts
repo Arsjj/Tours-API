@@ -88,16 +88,16 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
 
 // findByIdAndUpdate
 // findByIdAndDelete
-reviewSchema.pre(/^findOneAnd/, async function (next) {
-  (this as any).r = await (this as any).findOne();
-  // console.log(this.r);
-  next();
-});
+// reviewSchema.pre(/^findOneAnd/, async function (next) {
+//   (this as any).r = await (this as any).findOne();
+//   // console.log(this.r);
+//   next();
+// });
 
-reviewSchema.post(/^findOneAnd/, async function () {
-  // await this.findOne(); does NOT work here, query has already executed
-  await (this as any).r.constructor.calcAverageRatings((this as any).r.tour);
-});
+// reviewSchema.post(/^findOneAnd/, async function () {
+//   // await this.findOne(); does NOT work here, query has already executed
+//   await (this as any).r.constructor.calcAverageRatings((this as any).r.tour);
+// });
 
 reviewSchema.index(
   { tour: 1, user: 1 },

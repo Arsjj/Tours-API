@@ -5,16 +5,16 @@ import AppError from "../utils/appError";
 import User from "../models/userModel";
 import { deleteOne, getAll, getOne, updateOne } from "./handlerFactory";
 
-const filterObj = (
-  obj: Record<string, any>,
-  ...allowedFields: Array<string>
-) => {
-  const newObj: any = {};
-  Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) newObj[el] = obj[el];
-  });
-  return newObj;
-};
+// const filterObj = (
+//   obj: Record<string, any>,
+//   ...allowedFields: Array<string>
+// ) => {
+//   const newObj: any = {};
+//   Object.keys(obj).forEach((el) => {
+//     if (!allowedFields.includes(el)) newObj[el] = obj[el];
+//   });
+//   return newObj;
+// };
 
 const createUser = (req: Request, res: Response) => {
   res.status(500).json({
@@ -39,14 +39,22 @@ const updateMe = catchAsync(
         )
       );
     }
+    if (req.body.email) {
+      return next(
+        new AppError(
+          "You can't change your email",
+          400
+        )
+      );
+    }
 
     // 2) Filtered out unwanted fields names that are not allowed to be updated
-    const filteredBody = filterObj(req.body, "name", "email");
+    // const filteredBody = filterObj(req.body, "email");
 
     // 3) Update user document
     const updatedUser = await User.findByIdAndUpdate(
       req.user?.id,
-      filteredBody,
+      req.body,
       {
         new: true,
         runValidators: true,
