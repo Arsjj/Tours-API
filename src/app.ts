@@ -52,7 +52,7 @@ app.use(
 );
 
 //ROUTES
-app.use("/", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("You are welcome");
 });
 app.use("/tours", tourRouter);
