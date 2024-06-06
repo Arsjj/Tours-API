@@ -3,30 +3,18 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import User from "../models/userModel";
+import { deleteOne, getAll, getOne, updateOne } from "./handlerFactory";
 
-const filterObj = (
-  obj: Record<string, any>,
-  ...allowedFields: Array<string>
-) => {
-  const newObj: any = {};
-  Object.keys(obj).forEach((el) => {
-    if (allowedFields.includes(el)) newObj[el] = obj[el];
-  });
-  return newObj;
-};
-
-const getUsers = catchAsync(async (req: Request, res: Response) => {
-  const users = await User.find();
-
-  // SEND RESPONSE
-  res.status(200).json({
-    status: "success",
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
+// const filterObj = (
+//   obj: Record<string, any>,
+//   ...allowedFields: Array<string>
+// ) => {
+//   const newObj: any = {};
+//   Object.keys(obj).forEach((el) => {
+//     if (!allowedFields.includes(el)) newObj[el] = obj[el];
+//   });
+//   return newObj;
+// };
 
 const createUser = (req: Request, res: Response) => {
   res.status(500).json({
@@ -34,23 +22,10 @@ const createUser = (req: Request, res: Response) => {
     message: "This route isn't defined yet",
   });
 };
-const getUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    statuse: "error",
-    message: "This route isn't defined yet",
-  });
-};
-const updateUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    statuse: "error",
-    message: "This route isn't defined yet",
-  });
-};
-const deleteUser = (req: Request, res: Response) => {
-  res.status(500).json({
-    statuse: "error",
-    message: "This route isn't defined yet",
-  });
+
+const getMe = (req: Request, res: Response, next: NextFunction) => {
+  req.params.id = req.user?.id;
+  next();
 };
 
 const updateMe = catchAsync(
@@ -64,14 +39,22 @@ const updateMe = catchAsync(
         )
       );
     }
+    if (req.body.email) {
+      return next(
+        new AppError(
+          "You can't change your email",
+          400
+        )
+      );
+    }
 
     // 2) Filtered out unwanted fields names that are not allowed to be updated
-    const filteredBody = filterObj(req.body, "name", "email");
+    // const filteredBody = filterObj(req.body, "email");
 
     // 3) Update user document
     const updatedUser = await User.findByIdAndUpdate(
       req.user?.id,
-      filteredBody,
+      req.body,
       {
         new: true,
         runValidators: true,
@@ -87,16 +70,19 @@ const updateMe = catchAsync(
   }
 );
 
-const deleteMe = catchAsync(
-  async (req: Request, res: Response) => {
-    await User.findByIdAndUpdate(req.user?.id, { active: false });
+const deleteMe = catchAsync(async (req: Request, res: Response) => {
+  await User.findByIdAndUpdate(req.user?.id, { active: false });
 
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  }
-);
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+
+const getUser = getOne(User);
+const getUsers = getAll(User);
+const updateUser = updateOne(User);
+const deleteUser = deleteOne(User);
 
 export {
   getUsers,
@@ -104,6 +90,7 @@ export {
   createUser,
   updateUser,
   deleteUser,
+  getMe,
   updateMe,
   deleteMe,
 };

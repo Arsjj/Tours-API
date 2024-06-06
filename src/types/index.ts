@@ -13,3 +13,4 @@ export interface TourType {
   images?: string[];
   startDates?: string[];
 }
+
