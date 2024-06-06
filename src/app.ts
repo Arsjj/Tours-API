@@ -52,9 +52,8 @@ app.use(
 );
 
 //ROUTES
-app.use("/", (req: Request, res: Response, next: NextFunction) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("You are welcome");
-  next()
 });
 app.use("/tours", tourRouter);
 app.use("/reviews", reviewRouter);
