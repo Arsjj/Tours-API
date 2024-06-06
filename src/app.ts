@@ -52,6 +52,9 @@ app.use(
 );
 
 //ROUTES
+app.use("/", (req, res) => {
+  res.send("You are welcome");
+});
 app.use("/tours", tourRouter);
 app.use("/reviews", reviewRouter);
 app.use("/users", userRouter);
