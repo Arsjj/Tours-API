@@ -9,9 +9,11 @@ import userRouter from "./routes/userRoutes";
 import ExpressMongoSanitize from "express-mongo-sanitize";
 import { globalErrorHandler } from "./controllers/errorController";
 import reviewRouter from "./routes/reviewRoutes";
+import cors from "cors"
 
 const app = express();
 
+app.use(cors())
 //Set security HTTP headers
 app.use(helmet());
 

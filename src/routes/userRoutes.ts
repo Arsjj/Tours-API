@@ -8,6 +8,7 @@ import {
   getUsers,
   updateMe,
   updateUser,
+  uploadPhoto,
 } from "../controllers/userController";
 import {
   forgotPassword,
@@ -18,6 +19,7 @@ import {
   signUp,
   updatePassword,
 } from "../controllers/authController";
+
 
 const userRouter = express.Router();
 
@@ -31,7 +33,7 @@ userRouter.use(protect);
 
 userRouter.patch("/update-passwprd", updatePassword);
 userRouter.get("/me", getMe, getUser);
-userRouter.patch("/update-me", updateMe);
+userRouter.patch("/update-me", uploadPhoto, updateMe);
 userRouter.patch("/delete-me", deleteMe);
 
 //only for admins

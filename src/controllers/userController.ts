@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import AppError from "../utils/appError";
 import User from "../models/userModel";
+import multer from "multer";
+
 import { deleteOne, getAll, getOne, updateOne } from "./handlerFactory";
 
 // const filterObj = (
@@ -15,6 +17,29 @@ import { deleteOne, getAll, getOne, updateOne } from "./handlerFactory";
 //   });
 //   return newObj;
 // };
+
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "src/public");
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split("/")[1];
+    cb(null, `user=${req.user?.id}.${ext}`);
+  },
+});
+
+const multerFilter = (req: Request, file: any, cb: any) => {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new AppError("Not an image! Please upload only images", 400), false);
+  }
+};
+
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+
+const uploadPhoto = upload.single("photo");
 
 const createUser = (req: Request, res: Response) => {
   res.status(500).json({
@@ -30,6 +55,7 @@ const getMe = (req: Request, res: Response, next: NextFunction) => {
 
 const updateMe = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req);
     // 1) Create error if user POSTs password data
     if (req.body.password || req.body.passwordConfirm) {
       return next(
@@ -40,26 +66,17 @@ const updateMe = catchAsync(
       );
     }
     if (req.body.email) {
-      return next(
-        new AppError(
-          "You can't change your email",
-          400
-        )
-      );
+      return next(new AppError("You can't change your email", 400));
     }
 
     // 2) Filtered out unwanted fields names that are not allowed to be updated
     // const filteredBody = filterObj(req.body, "email");
 
     // 3) Update user document
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user?.id,
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const updatedUser = await User.findByIdAndUpdate(req.user?.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     res.status(200).json({
       status: "success",
@@ -93,4 +110,6 @@ export {
   getMe,
   updateMe,
   deleteMe,
+  uploadPhoto,
 };
+ 
